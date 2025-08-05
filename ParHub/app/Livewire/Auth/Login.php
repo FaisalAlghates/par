@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Livewire\Auth;
+
+use Illuminate\Auth\Events\Lockout;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Validate;
+use Livewire\Component;
+
+#[Layout('components.layouts.auth')]
+class Login extends Component
+{
+    #[Validate('required|string|email')]
+    public string $email = 'dfsdrge@gmail.com';
+
+    #[Validate('required|string')]
+    public string $password = 'password';
+
+    public bool $remember = false;
+
+    /**
+     * Handle an incoming authentication request.
+     */
+    public function login(): void
+    {
+        // Simple validation
+        $this->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        // Try to authenticate
+        if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+            // Success - regenerate session and redirect
+            request()->session()->regenerate();
+            
+            $this->redirect(route('dashboard'), navigate: true);
+            return;
+        }
+
+        // Failed - show error
+        $this->addError('email', 'Invalid credentials.');
+    }
+
+    /**
+     * Ensure the authentication request is not rate limited.
+     */
+    protected function ensureIsNotRateLimited(): void
+    {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+            return;
+        }
+
+        event(new Lockout(request()));
+
+        $seconds = RateLimiter::availableIn($this->throttleKey());
+
+        throw ValidationException::withMessages([
+            'email' => __('auth.throttle', [
+                'seconds' => $seconds,
+                'minutes' => ceil($seconds / 60),
+            ]),
+        ]);
+    }
+
+    /**
+     * Get the authentication rate limiting throttle key.
+     */
+    protected function throttleKey(): string
+    {
+        return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+    }
+}
