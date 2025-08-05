@@ -15,10 +15,10 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h1 class="text-4xl font-bold gradient-text-blue mb-2">
-                                Presentation Templates
+                                Templates Gallery
                             </h1>
                             <p class="text-white/70 text-lg">
-                                Professional templates designed to make your presentations stand out
+                                Professional presentation templates for every occasion
                             </p>
                         </div>
                             <div class="flex items-center space-x-3">

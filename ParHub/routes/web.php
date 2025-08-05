@@ -30,6 +30,12 @@ Route::view('dashboard', 'dashboard')
     ->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
+    // Advanced Dashboard
+    Route::get('/dashboard/advanced', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard.advanced');
+    Route::get('/dashboard/analytics', [\App\Http\Controllers\DashboardController::class, 'analytics'])->name('dashboard.analytics');
+    Route::get('/dashboard/quick-stats', [\App\Http\Controllers\DashboardController::class, 'quickStats'])->name('dashboard.quickStats');
+    Route::get('/api/dashboard/quick-stats', [\App\Http\Controllers\DashboardController::class, 'quickStats'])->name('api.dashboard.stats');
+    
     Route::redirect('settings', 'settings/profile');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
@@ -37,23 +43,42 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
     
     // Presentation Management Routes
-    Route::get('/presentations', function() {
-        return view('presentations.index');
-    })->name('presentations.index');
-    
-    Route::get('/presentations/create', function() {
-        return view('presentations.create');
-    })->name('presentations.create');
+    // Presentations routes
+    Route::get('/presentations', [\App\Http\Controllers\PresentationController::class, 'index'])->name('presentations.index');
+    Route::get('/presentations/create', [\App\Http\Controllers\PresentationController::class, 'create'])->name('presentations.create');
+    Route::post('/presentations', [\App\Http\Controllers\PresentationController::class, 'store'])->name('presentations.store');
+    Route::get('/presentations/{presentation}/edit', [\App\Http\Controllers\PresentationController::class, 'edit'])->name('presentations.edit');
+    Route::put('/presentations/{presentation}', [\App\Http\Controllers\PresentationController::class, 'update'])->name('presentations.update');
+    Route::get('/presentations/{presentation}', [\App\Http\Controllers\PresentationController::class, 'show'])->name('presentations.show');
+    Route::delete('/presentations/{presentation}', [\App\Http\Controllers\PresentationController::class, 'destroy'])->name('presentations.destroy');
     
     // Templates Routes
+    Route::resource('templates', \App\Http\Controllers\TemplateController::class);
+    Route::get('/templates/{template}/download', [\App\Http\Controllers\TemplateController::class, 'download'])->name('templates.download');
+    Route::get('/templates/{template}/preview', [\App\Http\Controllers\TemplateController::class, 'preview'])->name('templates.preview');
+    
+    // Categories Routes
+    Route::resource('categories', \App\Http\Controllers\CategoryController::class);
+    
+    // Search Routes
+    Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search.index');
+    Route::get('/search/suggestions', [\App\Http\Controllers\SearchController::class, 'suggestions'])->name('search.suggestions');
+    Route::get('/search/autocomplete', [\App\Http\Controllers\SearchController::class, 'autocomplete'])->name('search.autocomplete');
+    
+    // API Routes for AJAX requests
+    Route::prefix('api')->group(function () {
+        Route::get('/templates', [\App\Http\Controllers\TemplateController::class, 'apiIndex'])->name('api.templates.index');
+        Route::get('/templates/{template}', [\App\Http\Controllers\TemplateController::class, 'apiShow'])->name('api.templates.show');
+        Route::get('/categories', [\App\Http\Controllers\CategoryController::class, 'apiIndex'])->name('api.categories.index');
+        Route::get('/categories/{category}', [\App\Http\Controllers\CategoryController::class, 'apiShow'])->name('api.categories.show');
+    });
+    
     Route::get('/templates', function() {
         return view('templates.index');
     })->name('templates.index');
     
     // Analytics Routes
-    Route::get('/analytics', function() {
-        return view('analytics.index');
-    })->name('analytics.index');
+    Route::get('/analytics', [\App\Http\Controllers\DashboardController::class, 'analytics'])->name('analytics.index');
     
     // Media Library Routes
     Route::get('/media', function() {

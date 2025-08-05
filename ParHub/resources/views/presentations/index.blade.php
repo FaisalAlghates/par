@@ -47,6 +47,56 @@
                 </div>
             </div>
 
+            <!-- Statistics Cards -->
+            <div class="mb-8 animate-fade-in-up" style="animation-delay: 0.1s">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Total Presentations -->
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div class="w-12 h-12 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-1">{{ $stats['total'] ?? 0 }}</h3>
+                        <p class="text-white/60 text-sm">Total Presentations</p>
+                    </div>
+
+                    <!-- Published -->
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div class="w-12 h-12 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12l5 5L20 7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-1">{{ $stats['published'] ?? 0 }}</h3>
+                        <p class="text-white/60 text-sm">Published</p>
+                    </div>
+
+                    <!-- Drafts -->
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div class="w-12 h-12 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-1">{{ $stats['drafts'] ?? 0 }}</h3>
+                        <p class="text-white/60 text-sm">Drafts</p>
+                    </div>
+
+                    <!-- Total Views -->
+                    <div class="glass-card rounded-2xl p-6 text-center">
+                        <div class="w-12 h-12 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-1">{{ number_format($stats['totalViews'] ?? 0) }}</h3>
+                        <p class="text-white/60 text-sm">Total Views</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Filter Tabs -->
             <div class="mb-8 animate-fade-in-up" style="animation-delay: 0.2s">
                 <div class="glass-card rounded-2xl p-2">
@@ -305,7 +355,7 @@
                         </div>
                     </div>
                 </div>
-                @endfor
+                    </template>
                 
             </div>
             

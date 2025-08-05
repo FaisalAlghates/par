@@ -77,13 +77,13 @@
                     <!-- Enhanced Quick Actions -->
                     <div class="p-4 border-b border-white/20 dark:border-slate-700/30">
                         <div class="grid grid-cols-2 gap-3">
-                            <a href="/presentations/create" class="flex flex-col items-center p-3 bg-gradient-to-br from-violet-600 to-purple-600 text-white rounded-xl hover:from-violet-700 hover:to-purple-700 transition-all duration-300 elegant-shadow group">
+                            <a href="{{ route('presentations.create') }}" class="flex flex-col items-center p-3 bg-gradient-to-br from-violet-600 to-purple-600 text-white rounded-xl hover:from-violet-700 hover:to-purple-700 transition-all duration-300 elegant-shadow group">
                                 <svg class="w-6 h-6 mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                                 </svg>
                                 <span class="text-xs font-medium">New</span>
                             </a>
-                            <a href="/templates" class="flex flex-col items-center p-3 bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 elegant-shadow group">
+                            <a href="{{ route('templates.index') }}" class="flex flex-col items-center p-3 bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 elegant-shadow group">
                                 <svg class="w-6 h-6 mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
                                 </svg>
@@ -119,7 +119,7 @@
                             </a>
 
                             <!-- My Presentations -->
-                            <a href="/presentations" 
+                            <a href="{{ route('presentations.index') }}" 
                                class="nav-item-luxury flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 {{ request()->is('presentations*') ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/25' : 'text-slate-700 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-800/60' }}">
                                 <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3 {{ request()->is('presentations*') ? 'bg-white/20' : 'bg-blue-100 dark:bg-blue-900/30' }}">
                                     <svg class="w-5 h-5 {{ request()->is('presentations*') ? 'text-white' : 'text-blue-600 dark:text-blue-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,18 +127,21 @@
                                     </svg>
                                 </div>
                                 <span class="flex-1">My Presentations</span>
-                                <span class="bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 text-xs px-2 py-1 rounded-full font-medium">24</span>
+                                <span class="bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 text-xs px-2 py-1 rounded-full font-medium">{{ \App\Models\Presentation::count() }}</span>
                             </a>
 
                             <!-- Analytics -->
-                            <a href="/analytics" 
-                               class="nav-item-luxury flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 {{ request()->is('analytics*') ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/25' : 'text-slate-700 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-800/60' }}">
-                                <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3 {{ request()->is('analytics*') ? 'bg-white/20' : 'bg-emerald-100 dark:bg-emerald-900/30' }}">
-                                    <svg class="w-5 h-5 {{ request()->is('analytics*') ? 'text-white' : 'text-emerald-600 dark:text-emerald-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <a href="{{ route('dashboard.analytics') }}" 
+                               class="nav-item-luxury flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 {{ request()->routeIs('dashboard.analytics') ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/25' : 'text-slate-700 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-800/60' }}">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3 {{ request()->routeIs('dashboard.analytics') ? 'bg-white/20' : 'bg-emerald-100 dark:bg-emerald-900/30' }}">
+                                    <svg class="w-5 h-5 {{ request()->routeIs('dashboard.analytics') ? 'text-white' : 'text-emerald-600 dark:text-emerald-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                     </svg>
                                 </div>
                                 <span>Analytics</span>
+                                @if(request()->routeIs('dashboard.analytics'))
+                                    <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                                @endif
                             </a>
                         </div>
 
@@ -150,7 +153,7 @@
                             </h3>
                             
                             <!-- Media Library -->
-                            <a href="/media" 
+                            <a href="{{ route('media.index') }}" 
                                class="nav-item-luxury flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 {{ request()->is('media*') ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/25' : 'text-slate-700 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-800/60' }}">
                                 <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3 {{ request()->is('media*') ? 'bg-white/20' : 'bg-orange-100 dark:bg-orange-900/30' }}">
                                     <svg class="w-5 h-5 {{ request()->is('media*') ? 'text-white' : 'text-orange-600 dark:text-orange-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,7 +164,7 @@
                             </a>
 
                             <!-- Shared Files -->
-                            <a href="/shared" 
+                            <a href="{{ route('shared.index') }}" 
                                class="nav-item-luxury flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 {{ request()->is('shared*') ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/25' : 'text-slate-700 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-800/60' }}">
                                 <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3 {{ request()->is('shared*') ? 'bg-white/20' : 'bg-teal-100 dark:bg-teal-900/30' }}">
                                     <svg class="w-5 h-5 {{ request()->is('shared*') ? 'text-white' : 'text-teal-600 dark:text-teal-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">

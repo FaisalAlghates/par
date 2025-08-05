@@ -3,6 +3,7 @@
 <meta name="theme-color" content="#667eea" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="csrf-token" content="{{ csrf_token() }}" />
 
 <title>{{ $title ?? config('app.name') }}</title>
 
