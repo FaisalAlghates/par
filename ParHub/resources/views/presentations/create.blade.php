@@ -59,7 +59,13 @@
                 
                 <!-- From Template Card -->
                 <div @click="createFromTemplate()" 
-                     class="glass-effect-card rounded-3xl p-8 elegant-shadow hover:scale-105 transition-all duration-500 cursor-pointer group relative overflow-hidden">
+                     class="glass-effect-card rounded-3xl p-8 elegant-shadow hover:scale-105 transition-all duration-500 cursor-pointer group relative overflow-hidden"
+                     :class="{'opacity-50 pointer-events-none': loading}">
+                    <!-- Loading Overlay -->
+                    <div x-show="loading" class="absolute inset-0 bg-white/50 dark:bg-slate-900/50 flex items-center justify-center z-20">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600"></div>
+                    </div>
+                    
                     <!-- Gradient Overlay -->
                     <div class="absolute inset-0 bg-gradient-to-br from-violet-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                     
@@ -92,7 +98,13 @@
 
                 <!-- Upload Document Card -->
                 <div @click="uploadDocument()" 
-                     class="glass-effect-card rounded-3xl p-8 elegant-shadow hover:scale-105 transition-all duration-500 cursor-pointer group relative overflow-hidden">
+                     class="glass-effect-card rounded-3xl p-8 elegant-shadow hover:scale-105 transition-all duration-500 cursor-pointer group relative overflow-hidden"
+                     :class="{'opacity-50 pointer-events-none': loading}">
+                    <!-- Loading Overlay -->
+                    <div x-show="loading" class="absolute inset-0 bg-white/50 dark:bg-slate-900/50 flex items-center justify-center z-20">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    </div>
+                    
                     <!-- Gradient Overlay -->
                     <div class="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-cyan-600/20 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                     
@@ -125,7 +137,13 @@
 
                 <!-- Start from Scratch Card -->
                 <div @click="startFromScratch()" 
-                     class="glass-effect-card rounded-3xl p-8 elegant-shadow hover:scale-105 transition-all duration-500 cursor-pointer group relative overflow-hidden">
+                     class="glass-effect-card rounded-3xl p-8 elegant-shadow hover:scale-105 transition-all duration-500 cursor-pointer group relative overflow-hidden"
+                     :class="{'opacity-50 pointer-events-none': loading}">
+                    <!-- Loading Overlay -->
+                    <div x-show="loading" class="absolute inset-0 bg-white/50 dark:bg-slate-900/50 flex items-center justify-center z-20">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+                    </div>
+                    
                     <!-- Gradient Overlay -->
                     <div class="absolute inset-0 bg-gradient-to-br from-emerald-600/20 to-teal-600/20 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                     
@@ -252,12 +270,16 @@
                     <div @click="useTemplate({{ $template->id }})" 
                          class="glass-effect-card rounded-2xl p-6 hover:scale-105 transition-all duration-500 cursor-pointer group elegant-shadow">
                         <!-- Template Preview -->
-                        <div class="aspect-video bg-gradient-to-br from-{{ $template->category->color ?? 'blue' }}-500 to-{{ $template->category->color ?? 'blue' }}-600 rounded-xl mb-4 flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform duration-300"
+                        <div class="aspect-video bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl mb-4 flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform duration-300"
                              style="background: linear-gradient(135deg, {{ $template->category->color ?? '#3b82f6' }} 0%, {{ $template->category->color ?? '#1d4ed8' }} 100%);">
                             <div class="absolute inset-0 bg-black/20"></div>
-                            @if($template->category)
+                            @if($template->category && isset($template->category->icon))
                                 <svg class="w-10 h-10 text-white relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $template->category->icon }}"></path>
+                                </svg>
+                            @else
+                                <svg class="w-10 h-10 text-white relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
                                 </svg>
                             @endif
                         </div>
@@ -346,12 +368,34 @@
                 
                 startFromScratch() {
                     this.loading = true;
-                    // Simulate navigation to editor
-                    setTimeout(() => {
-                        alert('Opening blank presentation editor...');
+                    
+                    // Create a new blank presentation
+                    fetch('/presentations', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            title: 'New Presentation',
+                            description: 'A blank presentation'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = `/presentations/${data.presentation.id}/edit`;
+                        } else {
+                            alert('Error creating presentation. Please try again.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error creating presentation. Please try again.');
+                    })
+                    .finally(() => {
                         this.loading = false;
-                        // window.location.href = '/editor/new';
-                    }, 1000);
+                    });
                 },
                 
                 tryAIAssistant() {
@@ -392,12 +436,33 @@
                 
                 processUpload(file) {
                     this.loading = true;
-                    // Simulate file processing
-                    setTimeout(() => {
-                        alert(`Processing ${file.name}...`);
+                    
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('title', `Imported from ${file.name}`);
+                    
+                    fetch('/presentations/upload', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = `/presentations/${data.presentation.id}/edit`;
+                        } else {
+                            alert('Error processing file. Please try again.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error processing file. Please try again.');
+                    })
+                    .finally(() => {
                         this.loading = false;
-                        // Handle actual upload logic here
-                    }, 2000);
+                    });
                 },
                 
                 scrollToTemplates() {

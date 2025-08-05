@@ -16,10 +16,10 @@ use Livewire\Component;
 class Login extends Component
 {
     #[Validate('required|string|email')]
-    public string $email = 'dfsdrge@gmail.com';
+    public string $email = '';
 
     #[Validate('required|string')]
-    public string $password = 'password';
+    public string $password = '';
 
     public bool $remember = false;
 
@@ -28,6 +28,9 @@ class Login extends Component
      */
     public function login(): void
     {
+        // Check rate limiting first
+        $this->ensureIsNotRateLimited();
+
         // Simple validation
         $this->validate([
             'email' => 'required|email',
@@ -35,16 +38,33 @@ class Login extends Component
         ]);
 
         // Try to authenticate
-        if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        $credentials = ['email' => $this->email, 'password' => $this->password];
+        
+        \Log::info('Login attempt for: ' . $this->email . ' in database: ' . \DB::connection()->getDatabaseName());
+        
+        if (Auth::attempt($credentials, $this->remember)) {
+            // Clear rate limiting attempts on successful login
+            RateLimiter::clear($this->throttleKey());
+            
+            \Log::info('Login successful for: ' . $this->email);
+            
             // Success - regenerate session and redirect
             request()->session()->regenerate();
+            
+            // Add session flash message
+            session()->flash('success', 'Welcome back! Login successful.');
             
             $this->redirect(route('dashboard'), navigate: true);
             return;
         }
 
+        \Log::warning('Login failed for: ' . $this->email);
+
+        // Increment rate limiting attempts
+        RateLimiter::hit($this->throttleKey());
+
         // Failed - show error
-        $this->addError('email', 'Invalid credentials.');
+        $this->addError('email', 'These credentials do not match our records.');
     }
 
     /**

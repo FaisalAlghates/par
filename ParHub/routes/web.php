@@ -18,12 +18,40 @@ Route::get('/test-login', function() {
 
 // Simple test route to check if login works
 Route::get('/quick-login', function() {
-    if (Auth::attempt(['email' => 'dfsdrge@gmail.com', 'password' => 'password'])) {
+    if (Auth::attempt(['email' => 'test@test.com', 'password' => 'password'])) {
         return redirect()->route('dashboard')->with('success', 'Login successful!');
     } else {
         return back()->with('error', 'Login failed!');
     }
 })->name('quick.login');
+
+// Debug route to check authentication state
+Route::get('/debug-auth', function() {
+    $user = Auth::user();
+    return response()->json([
+        'authenticated' => Auth::check(),
+        'user' => $user ? $user->toArray() : null,
+        'session_id' => session()->getId(),
+        'database' => DB::connection()->getDatabaseName(),
+        'users_count' => App\Models\User::count(),
+        'routes' => [
+            'login' => route('login'),
+            'dashboard' => route('dashboard'),
+        ]
+    ]);
+})->name('debug.auth');
+
+// Database stats route
+Route::get('/db-stats', function() {
+    return response()->json([
+        'database' => DB::connection()->getDatabaseName(),
+        'users' => App\Models\User::count(),
+        'presentations' => DB::table('presentations')->count(),
+        'templates' => DB::table('templates')->count(),
+        'categories' => DB::table('categories')->count(),
+        'latest_user' => App\Models\User::latest()->first(['id', 'name', 'email', 'created_at']),
+    ]);
+})->name('db.stats');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth'])
@@ -47,6 +75,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/presentations', [\App\Http\Controllers\PresentationController::class, 'index'])->name('presentations.index');
     Route::get('/presentations/create', [\App\Http\Controllers\PresentationController::class, 'create'])->name('presentations.create');
     Route::post('/presentations', [\App\Http\Controllers\PresentationController::class, 'store'])->name('presentations.store');
+    Route::post('/presentations/upload', [\App\Http\Controllers\PresentationController::class, 'upload'])->name('presentations.upload');
     Route::get('/presentations/{presentation}/edit', [\App\Http\Controllers\PresentationController::class, 'edit'])->name('presentations.edit');
     Route::put('/presentations/{presentation}', [\App\Http\Controllers\PresentationController::class, 'update'])->name('presentations.update');
     Route::get('/presentations/{presentation}', [\App\Http\Controllers\PresentationController::class, 'show'])->name('presentations.show');

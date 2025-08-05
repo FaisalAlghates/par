@@ -33,6 +33,60 @@ class PresentationController extends Controller
             ->take(4)
             ->get();
 
+        // If no templates exist, create some sample ones for demonstration
+        if ($popularTemplates->isEmpty()) {
+            $popularTemplates = collect([
+                (object) [
+                    'id' => 0,
+                    'name' => 'Business Presentation',
+                    'category' => (object) [
+                        'name' => 'Business',
+                        'color' => '#3b82f6',
+                        'icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'
+                    ],
+                    'rating' => 4.5,
+                    'downloads' => 1250,
+                    'is_premium' => false
+                ],
+                (object) [
+                    'id' => 0,
+                    'name' => 'Creative Portfolio',
+                    'category' => (object) [
+                        'name' => 'Creative',
+                        'color' => '#8b5cf6',
+                        'icon' => 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'
+                    ],
+                    'rating' => 4.8,
+                    'downloads' => 890,
+                    'is_premium' => true
+                ],
+                (object) [
+                    'id' => 0,
+                    'name' => 'Educational',
+                    'category' => (object) [
+                        'name' => 'Education',
+                        'color' => '#10b981',
+                        'icon' => 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'
+                    ],
+                    'rating' => 4.3,
+                    'downloads' => 567,
+                    'is_premium' => false
+                ],
+                (object) [
+                    'id' => 0,
+                    'name' => 'Minimalist',
+                    'category' => (object) [
+                        'name' => 'Minimal',
+                        'color' => '#6b7280',
+                        'icon' => 'M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z'
+                    ],
+                    'rating' => 4.6,
+                    'downloads' => 723,
+                    'is_premium' => false
+                ]
+            ]);
+        }
+
         return view('presentations.create', compact('popularTemplates'));
     }
 
@@ -135,6 +189,41 @@ class PresentationController extends Controller
 
         return redirect()->route('presentations.index')
             ->with('success', 'Presentation deleted successfully!');
+    }
+
+    public function upload(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:pdf,docx,pptx|max:20480', // Max 20MB
+            'title' => 'required|string|max:255'
+        ]);
+
+        $file = $request->file('file');
+        $title = $request->input('title');
+        
+        // Store the uploaded file
+        $filePath = $file->store('uploads/presentations', 'public');
+        
+        // Create presentation record
+        $presentation = Presentation::create([
+            'title' => $title,
+            'description' => 'Imported from ' . $file->getClientOriginalName(),
+            'user_id' => auth()->id(),
+            'status' => 'draft',
+            'original_file' => $filePath,
+            'file_type' => $file->getClientOriginalExtension()
+        ]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'presentation' => $presentation,
+                'message' => 'File uploaded and presentation created successfully'
+            ]);
+        }
+
+        return redirect()->route('presentations.edit', $presentation)
+            ->with('success', 'File uploaded and presentation created successfully');
     }
 
     public function duplicate(Presentation $presentation)

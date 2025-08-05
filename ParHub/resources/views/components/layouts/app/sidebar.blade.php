@@ -2,6 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
         @include('partials.head')
+        @livewireStyles
     </head>
     <body class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900">
         <!-- Modern Sidebar with Enhanced Glass Effect -->
@@ -519,5 +520,6 @@
                 box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
             }
         </style>
+        @livewireScripts
     </body>
 </html>

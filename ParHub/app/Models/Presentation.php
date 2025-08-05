@@ -19,7 +19,9 @@ class Presentation extends Model
         'thumbnail',
         'status',
         'views',
-        'last_edited'
+        'last_edited',
+        'original_file',
+        'file_type'
     ];
 
     protected $casts = [
