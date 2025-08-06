@@ -21,12 +21,14 @@ class Presentation extends Model
         'views',
         'last_edited',
         'original_file',
-        'file_type'
+        'file_type',
+        'ai_metadata'
     ];
 
     protected $casts = [
         'slides' => 'array',
         'settings' => 'array',
+        'ai_metadata' => 'array',
         'last_edited' => 'datetime'
     ];
 

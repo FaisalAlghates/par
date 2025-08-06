@@ -226,6 +226,84 @@ class PresentationController extends Controller
             ->with('success', 'File uploaded and presentation created successfully');
     }
 
+    public function createFromAI(Request $request)
+    {
+        try {
+            // Validate the incoming AI presentation data
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'type' => 'required|string',
+                'theme' => 'required|string',
+                'slides' => 'required|array',
+                'slides.*.title' => 'required|string',
+                'slides.*.content' => 'required|string',
+                'slides.*.type' => 'required|string',
+                'slideCount' => 'required|integer|min:1|max:50',
+                'estimatedDuration' => 'required|integer|min:1'
+            ]);
+
+            // Create the presentation record
+            $presentation = Presentation::create([
+                'title' => $request->input('title'),
+                'description' => "AI-generated {$request->input('type')} presentation with {$request->input('slideCount')} slides",
+                'user_id' => auth()->id(),
+                'status' => 'draft',
+                'file_type' => 'ai_generated',
+                'ai_metadata' => json_encode([
+                    'presentation_type' => $request->input('type'),
+                    'theme' => $request->input('theme'),
+                    'slide_count' => $request->input('slideCount'),
+                    'estimated_duration' => $request->input('estimatedDuration'),
+                    'created_by_ai' => true,
+                    'generation_timestamp' => now()->toISOString(),
+                    'slides_structure' => $request->input('slides')
+                ])
+            ]);
+
+            // Create individual slide records (if you have a slides table)
+            foreach ($request->input('slides') as $index => $slideData) {
+                // You can create a Slide model and table for this if needed
+                // For now, we'll store slide data in the ai_metadata
+            }
+
+            // Log the AI presentation creation
+            \Log::info('AI Presentation Created', [
+                'user_id' => auth()->id(),
+                'presentation_id' => $presentation->id,
+                'title' => $presentation->title,
+                'type' => $request->input('type'),
+                'slide_count' => $request->input('slideCount')
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'presentation_id' => $presentation->id,
+                'presentation_url' => route('presentations.show', $presentation),
+                'edit_url' => route('presentations.edit', $presentation),
+                'message' => 'AI presentation created successfully!'
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors(),
+                'message' => 'Validation failed. Please check your input data.'
+            ], 422);
+
+        } catch (\Exception $e) {
+            \Log::error('AI Presentation Creation Failed', [
+                'user_id' => auth()->id(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create AI presentation. Please try again.'
+            ], 500);
+        }
+    }
+
     public function duplicate(Presentation $presentation)
     {
         // التحقق من الصلاحيات

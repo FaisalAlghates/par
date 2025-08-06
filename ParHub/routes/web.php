@@ -76,6 +76,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/presentations/create', [\App\Http\Controllers\PresentationController::class, 'create'])->name('presentations.create');
     Route::post('/presentations', [\App\Http\Controllers\PresentationController::class, 'store'])->name('presentations.store');
     Route::post('/presentations/upload', [\App\Http\Controllers\PresentationController::class, 'upload'])->name('presentations.upload');
+    Route::post('/presentations/create-from-ai', [\App\Http\Controllers\PresentationController::class, 'createFromAI'])->name('presentations.create-from-ai');
     Route::get('/presentations/{presentation}/edit', [\App\Http\Controllers\PresentationController::class, 'edit'])->name('presentations.edit');
     Route::put('/presentations/{presentation}', [\App\Http\Controllers\PresentationController::class, 'update'])->name('presentations.update');
     Route::get('/presentations/{presentation}', [\App\Http\Controllers\PresentationController::class, 'show'])->name('presentations.show');

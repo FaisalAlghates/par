@@ -249,13 +249,68 @@
                                     <div :class="message.type === 'user' ? 
                                         'bg-gradient-to-r from-orange-500 via-red-600 to-pink-600 text-white max-w-xs lg:max-w-lg px-6 py-4 rounded-2xl rounded-tr-md shadow-lg' :
                                         'glass-morphism-card max-w-xs lg:max-w-lg px-6 py-4 rounded-2xl rounded-tl-md shadow-lg'">
-                                        <div class="text-sm leading-relaxed" x-text="message.content"></div>
+                                        
+                                        <!-- Regular Message Content -->
+                                        <div class="text-sm leading-relaxed whitespace-pre-line" x-text="message.content"></div>
+                                        
+                                        <!-- Presentation Actions (for AI messages with presentations) -->
+                                        <div x-show="message.hasPresentation" class="mt-4 space-y-3">
+                                            <div class="border-t border-white/20 pt-4">
+                                                <div class="grid grid-cols-2 gap-2">
+                                                    <button onclick="window.open('/presentations', '_blank')" 
+                                                            class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-2 rounded-xl text-xs font-medium hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 flex items-center justify-center space-x-1">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                        </svg>
+                                                        <span>View</span>
+                                                    </button>
+                                                    <button onclick="window.open('/presentations/create', '_blank')" 
+                                                            class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-medium hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center space-x-1">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                        </svg>
+                                                        <span>Edit</span>
+                                                    </button>
+                                                </div>
+                                                <button onclick="navigator.share ? navigator.share({title: 'AI Generated Presentation', text: 'Check out this presentation created with AI!', url: window.location.href}) : prompt('Share this link:', window.location.href)" 
+                                                        class="w-full mt-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white px-4 py-2 rounded-xl text-xs font-medium hover:from-purple-600 hover:to-pink-700 transition-all duration-300 flex items-center justify-center space-x-1">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                                                    </svg>
+                                                    <span>Share Presentation</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Quick Actions (for AI messages with actions) -->
+                                        <div x-show="message.hasActions" class="mt-4 space-y-2">
+                                            <div class="border-t border-white/20 pt-4">
+                                                <div class="grid grid-cols-1 gap-2">
+                                                    <button :onclick="'window.open(\\'/presentations/' + (message.presentationId || '') + '\\', \\\'_blank\\\')'" 
+                                                            class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-medium hover:from-green-600 hover:to-emerald-700 transition-all duration-300 flex items-center justify-center space-x-1">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                                        </svg>
+                                                        <span>Open Presentation</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Message Timestamp -->
                                         <div :class="message.type === 'user' ? 'text-white/70' : 'text-slate-500 dark:text-slate-400'" 
                                              class="text-xs mt-2 flex items-center space-x-2">
                                             <span x-text="message.time"></span>
                                             <div x-show="message.type === 'ai'" class="flex items-center space-x-1">
-                                                <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div>
-                                                <span>AI</span>
+                                                <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
+                                                <span>AI Assistant</span>
+                                            </div>
+                                            <div x-show="message.hasPresentation" class="flex items-center space-x-1 bg-emerald-500/20 px-2 py-1 rounded-full">
+                                                <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                </svg>
+                                                <span class="text-emerald-400 font-medium">Presentation</span>
                                             </div>
                                         </div>
                                     </div>
@@ -319,17 +374,26 @@
                             <!-- Quick Actions Bar -->
                             <div class="flex items-center justify-between mt-4 px-2">
                                 <div class="flex items-center space-x-4 text-sm text-slate-500 dark:text-slate-400">
-                                    <button class="flex items-center space-x-2 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
+                                    <button @click="sendMessage('Create a business pitch presentation for investors')" 
+                                            class="flex items-center space-x-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors bg-blue-50 dark:bg-blue-900/20 px-3 py-2 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-800/30">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                         </svg>
-                                        <span>Quick Start</span>
+                                        <span>Business Pitch</span>
                                     </button>
-                                    <button class="flex items-center space-x-2 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
+                                    <button @click="sendMessage('Create an educational presentation with interactive elements')" 
+                                            class="flex items-center space-x-2 hover:text-green-600 dark:hover:text-green-400 transition-colors bg-green-50 dark:bg-green-900/20 px-3 py-2 rounded-xl hover:bg-green-100 dark:hover:bg-green-800/30">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                         </svg>
-                                        <span>Templates</span>
+                                        <span>Educational</span>
+                                    </button>
+                                    <button @click="sendMessage('Generate a marketing presentation for brand strategy')" 
+                                            class="flex items-center space-x-2 hover:text-purple-600 dark:hover:text-purple-400 transition-colors bg-purple-50 dark:bg-purple-900/20 px-3 py-2 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-800/30">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m0 0V1a1 1 0 011-1h2a1 1 0 011 1v4.586l2.707 2.707a1 1 0 010 1.414L19 12.414V13a1 1 0 01-1 1h-2v4a1 1 0 01-1 1H9a1 1 0 01-1-1v-4H6a1 1 0 01-1-1v-.586L1.293 9.707a1 1 0 010-1.414L4 5.293V1a1 1 0 011-1h2a1 1 0 011 1v3z"></path>
+                                        </svg>
+                                        <span>Marketing</span>
                                     </button>
                                 </div>
                                 <div class="flex items-center space-x-2 text-xs text-slate-400">
@@ -519,6 +583,28 @@
         </div>
     </div>
 
+    <!-- Floating AI Assistant Quick Access -->
+    <div class="fixed bottom-8 right-8 z-50">
+        <div class="relative">
+            <!-- Main AI Button -->
+            <button @click="sendMessage('Show me presentation templates')" 
+                    class="w-16 h-16 bg-gradient-to-r from-orange-500 via-red-600 to-pink-600 hover:from-orange-600 hover:via-red-700 hover:to-pink-700 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-110 group animate-float">
+                <svg class="w-8 h-8 mx-auto group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                
+                <!-- Pulse Effect -->
+                <div class="absolute inset-0 rounded-full bg-gradient-to-r from-orange-500 to-red-600 opacity-30 animate-ping"></div>
+            </button>
+            
+            <!-- Tooltip -->
+            <div class="absolute bottom-20 right-0 bg-slate-900 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                Quick AI Assistant
+                <div class="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-900"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Enhanced JavaScript for AI Assistant -->
     <script>
         function aiAssistantData() {
@@ -584,50 +670,252 @@
                     this.isTyping = true;
                     
                     // Show notification for user feedback
-                    this.showNotification('Message sent! AI is processing...', 'info');
+                    this.showNotification('Creating your presentation...', 'info');
                     
-                    // Simulate enhanced AI response with realistic delay
+                    // Enhanced AI response with presentation generation
                     setTimeout(() => {
+                        const aiResponse = this.generateAIResponse(messageText);
                         this.messages.push({
                             id: this.messageId++,
                             type: 'ai',
-                            content: this.generateAIResponse(messageText),
-                            time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                            content: aiResponse.content,
+                            time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                            hasPresentation: aiResponse.hasPresentation,
+                            presentationData: aiResponse.presentationData
                         });
                         this.isTyping = false;
                         this.scrollToBottom();
-                        this.showNotification('AI response received!', 'success');
-                    }, Math.random() * 2000 + 2000); // 2-4 seconds for realism
+                        
+                        if (aiResponse.hasPresentation) {
+                            this.showNotification('🎉 Presentation created successfully!', 'success');
+                            // Trigger presentation creation in backend
+                            this.createPresentation(aiResponse.presentationData);
+                        } else {
+                            this.showNotification('AI response received!', 'success');
+                        }
+                    }, Math.random() * 3000 + 3000); // 3-6 seconds for presentation generation
                     
                     this.scrollToBottom();
                 },
                 
                 generateAIResponse(userMessage) {
+                    const lowerMessage = userMessage.toLowerCase();
+                    
+                    // Keywords that trigger presentation generation
+                    const presentationKeywords = ['create', 'make', 'generate', 'build', 'presentation', 'slides', 'deck'];
+                    const shouldCreatePresentation = presentationKeywords.some(keyword => lowerMessage.includes(keyword));
+                    
+                    if (shouldCreatePresentation) {
+                        return this.generatePresentationResponse(userMessage);
+                    }
+                    
                     // Enhanced AI responses based on message content
                     const businessKeywords = ['business', 'pitch', 'startup', 'investor', 'company', 'profit'];
                     const educationalKeywords = ['education', 'learn', 'teach', 'school', 'student', 'academic'];
                     const marketingKeywords = ['marketing', 'social media', 'campaign', 'brand', 'advertisement'];
                     const portfolioKeywords = ['portfolio', 'showcase', 'work', 'project', 'creative'];
 
-                    const lowerMessage = userMessage.toLowerCase();
-                    
                     if (businessKeywords.some(keyword => lowerMessage.includes(keyword))) {
-                        return "Excellent! I'll help you create a compelling business presentation. I recommend starting with an executive summary, market analysis, your unique value proposition, business model, competitive landscape, financial projections, and a strong call to action. Would you like me to focus on any specific aspect first?";
+                        return {
+                            content: "Excellent! I'll help you create a compelling business presentation. I recommend starting with an executive summary, market analysis, your unique value proposition, business model, competitive landscape, financial projections, and a strong call to action. Would you like me to create a full presentation for you?",
+                            hasPresentation: false
+                        };
                     } else if (educationalKeywords.some(keyword => lowerMessage.includes(keyword))) {
-                        return "Perfect for educational content! I suggest structuring your presentation with clear learning objectives, engaging visuals, interactive elements, and knowledge checkpoints. We can include real-world examples, case studies, and assessment questions. What's the primary learning goal for your audience?";
+                        return {
+                            content: "Perfect for educational content! I suggest structuring your presentation with clear learning objectives, engaging visuals, interactive elements, and knowledge checkpoints. We can include real-world examples, case studies, and assessment questions. Shall I generate a complete educational presentation for you?",
+                            hasPresentation: false
+                        };
                     } else if (marketingKeywords.some(keyword => lowerMessage.includes(keyword))) {
-                        return "Great choice for marketing! I'll help you create a presentation that tells your brand story effectively. We should include market research, target audience analysis, campaign strategies, success metrics, and ROI projections. What's your main marketing objective?";
+                        return {
+                            content: "Great choice for marketing! I'll help you create a presentation that tells your brand story effectively. We should include market research, target audience analysis, campaign strategies, success metrics, and ROI projections. Would you like me to build this presentation right now?",
+                            hasPresentation: false
+                        };
                     } else if (portfolioKeywords.some(keyword => lowerMessage.includes(keyword))) {
-                        return "Wonderful! A portfolio presentation should highlight your best work and tell your professional story. I recommend including an introduction, project showcases with before/after comparisons, your creative process, client testimonials, and future goals. What type of work would you like to feature prominently?";
+                        return {
+                            content: "Wonderful! A portfolio presentation should highlight your best work and tell your professional story. I recommend including an introduction, project showcases with before/after comparisons, your creative process, client testimonials, and future goals. Ready to create your portfolio presentation?",
+                            hasPresentation: false
+                        };
                     } else {
                         const generalResponses = [
-                            "That sounds like a fantastic presentation idea! I can help you structure this with a compelling opening, clear main points, supporting evidence, and a memorable conclusion. What's the primary goal you want to achieve with this presentation?",
-                            "Excellent topic choice! I recommend creating 8-12 slides with a strong narrative flow. We can include engaging visuals, data visualization, and interactive elements. Who is your target audience for this presentation?",
-                            "Perfect! I'll help you build a presentation that captures attention and delivers your message effectively. Let's start with defining your key objectives and then create content that resonates with your audience. What's the main takeaway you want people to remember?",
-                            "Great concept! I can assist you in creating a professional presentation with compelling storytelling, visual hierarchy, and clear calls to action. Would you like to focus on persuasive content, informational delivery, or inspirational messaging?"
+                            "That sounds like a fantastic presentation idea! I can help you structure this with a compelling opening, clear main points, supporting evidence, and a memorable conclusion. Would you like me to create a full presentation based on this topic?",
+                            "Excellent topic choice! I can generate a complete presentation with 8-12 slides, engaging visuals, data visualization, and interactive elements. Just say 'create presentation' and I'll build it for you!",
+                            "Perfect! I'll help you build a presentation that captures attention and delivers your message effectively. I can create the entire presentation including slides, content, and design suggestions. Ready to get started?",
+                            "Great concept! I can generate a professional presentation with compelling storytelling, visual hierarchy, and clear calls to action. Type 'make presentation' and I'll create it instantly!"
                         ];
-                        return generalResponses[Math.floor(Math.random() * generalResponses.length)];
+                        return {
+                            content: generalResponses[Math.floor(Math.random() * generalResponses.length)],
+                            hasPresentation: false
+                        };
                     }
+                },
+                
+                generatePresentationResponse(userMessage) {
+                    const lowerMessage = userMessage.toLowerCase();
+                    let presentationType = 'general';
+                    let slides = [];
+                    let theme = 'professional';
+                    
+                    // Determine presentation type and theme
+                    if (lowerMessage.includes('business') || lowerMessage.includes('pitch')) {
+                        presentationType = 'business';
+                        theme = 'corporate';
+                        slides = this.generateBusinessSlides(userMessage);
+                    } else if (lowerMessage.includes('education') || lowerMessage.includes('academic')) {
+                        presentationType = 'educational';
+                        theme = 'academic';
+                        slides = this.generateEducationalSlides(userMessage);
+                    } else if (lowerMessage.includes('marketing') || lowerMessage.includes('brand')) {
+                        presentationType = 'marketing';
+                        theme = 'creative';
+                        slides = this.generateMarketingSlides(userMessage);
+                    } else if (lowerMessage.includes('portfolio') || lowerMessage.includes('showcase')) {
+                        presentationType = 'portfolio';
+                        theme = 'modern';
+                        slides = this.generatePortfolioSlides(userMessage);
+                    } else {
+                        slides = this.generateGeneralSlides(userMessage);
+                    }
+                    
+                    const presentationData = {
+                        title: this.extractTitleFromMessage(userMessage),
+                        type: presentationType,
+                        theme: theme,
+                        slides: slides,
+                        slideCount: slides.length,
+                        estimatedDuration: Math.ceil(slides.length * 2), // 2 minutes per slide
+                        created: new Date().toISOString()
+                    };
+                    
+                    return {
+                        content: `🎉 **Presentation Created Successfully!**\n\n**"${presentationData.title}"**\n\n📊 **Details:**\n• ${presentationData.slideCount} slides\n• ${presentationData.estimatedDuration} minutes estimated duration\n• ${presentationData.theme} theme\n• ${presentationType} presentation type\n\n**Slide Overview:**\n${slides.map((slide, index) => `${index + 1}. ${slide.title}`).join('\n')}\n\n✨ Your presentation is ready! Click the button below to view and edit it.`,
+                        hasPresentation: true,
+                        presentationData: presentationData
+                    };
+                },
+                
+                generateBusinessSlides(userMessage) {
+                    return [
+                        { title: "Executive Summary", content: "High-level overview of your business opportunity", type: "title" },
+                        { title: "Problem Statement", content: "What problem are you solving?", type: "content" },
+                        { title: "Solution Overview", content: "Your innovative solution", type: "content" },
+                        { title: "Market Analysis", content: "Target market size and opportunities", type: "data" },
+                        { title: "Business Model", content: "How you make money", type: "diagram" },
+                        { title: "Competitive Landscape", content: "Competitive analysis and positioning", type: "comparison" },
+                        { title: "Financial Projections", content: "Revenue, costs, and profitability", type: "chart" },
+                        { title: "Team & Expertise", content: "Key team members and advisors", type: "team" },
+                        { title: "Funding Requirements", content: "Investment needed and use of funds", type: "content" },
+                        { title: "Call to Action", content: "Next steps and contact information", type: "conclusion" }
+                    ];
+                },
+                
+                generateEducationalSlides(userMessage) {
+                    return [
+                        { title: "Learning Objectives", content: "What students will learn", type: "title" },
+                        { title: "Introduction", content: "Topic overview and importance", type: "content" },
+                        { title: "Key Concepts", content: "Fundamental principles", type: "concept" },
+                        { title: "Real-World Examples", content: "Practical applications", type: "example" },
+                        { title: "Case Study", content: "Detailed analysis", type: "case" },
+                        { title: "Interactive Activity", content: "Student engagement", type: "activity" },
+                        { title: "Knowledge Check", content: "Assessment questions", type: "quiz" },
+                        { title: "Summary", content: "Key takeaways", type: "summary" },
+                        { title: "Further Reading", content: "Additional resources", type: "resources" }
+                    ];
+                },
+                
+                generateMarketingSlides(userMessage) {
+                    return [
+                        { title: "Brand Story", content: "Your brand's mission and vision", type: "title" },
+                        { title: "Market Research", content: "Industry insights and trends", type: "data" },
+                        { title: "Target Audience", content: "Customer personas and demographics", type: "personas" },
+                        { title: "Campaign Strategy", content: "Marketing approach and channels", type: "strategy" },
+                        { title: "Creative Concepts", content: "Visual designs and messaging", type: "creative" },
+                        { title: "Social Media Plan", content: "Platform-specific strategies", type: "social" },
+                        { title: "Budget Allocation", content: "Investment breakdown", type: "budget" },
+                        { title: "Success Metrics", content: "KPIs and measurement", type: "metrics" },
+                        { title: "ROI Projections", content: "Expected returns", type: "roi" }
+                    ];
+                },
+                
+                generatePortfolioSlides(userMessage) {
+                    return [
+                        { title: "Professional Introduction", content: "About me and my expertise", type: "title" },
+                        { title: "Skills & Competencies", content: "Technical and soft skills", type: "skills" },
+                        { title: "Featured Project #1", content: "Project showcase with results", type: "project" },
+                        { title: "Featured Project #2", content: "Another key project", type: "project" },
+                        { title: "Creative Process", content: "How I approach projects", type: "process" },
+                        { title: "Client Testimonials", content: "Social proof and reviews", type: "testimonials" },
+                        { title: "Achievements & Awards", content: "Recognition and accomplishments", type: "achievements" },
+                        { title: "Future Goals", content: "Career aspirations", type: "goals" },
+                        { title: "Contact & Collaboration", content: "Let's work together", type: "contact" }
+                    ];
+                },
+                
+                generateGeneralSlides(userMessage) {
+                    return [
+                        { title: "Introduction", content: "Topic overview and objectives", type: "title" },
+                        { title: "Background", content: "Context and relevance", type: "content" },
+                        { title: "Main Points", content: "Key arguments or concepts", type: "content" },
+                        { title: "Supporting Evidence", content: "Data, examples, and research", type: "data" },
+                        { title: "Analysis", content: "Detailed examination", type: "analysis" },
+                        { title: "Implications", content: "What this means", type: "implications" },
+                        { title: "Recommendations", content: "Suggested actions", type: "recommendations" },
+                        { title: "Conclusion", content: "Summary and final thoughts", type: "conclusion" }
+                    ];
+                },
+                
+                extractTitleFromMessage(message) {
+                    // Extract title from user message using simple keyword detection
+                    const words = message.split(' ');
+                    if (message.toLowerCase().includes('about')) {
+                        const aboutIndex = words.findIndex(word => word.toLowerCase() === 'about');
+                        if (aboutIndex !== -1 && aboutIndex < words.length - 1) {
+                            return words.slice(aboutIndex + 1).join(' ').replace(/[^\w\s]/gi, '');
+                        }
+                    }
+                    
+                    // Default titles based on content
+                    const lowerMessage = message.toLowerCase();
+                    if (lowerMessage.includes('business')) return 'Business Presentation';
+                    if (lowerMessage.includes('marketing')) return 'Marketing Strategy';
+                    if (lowerMessage.includes('education')) return 'Educational Content';
+                    if (lowerMessage.includes('portfolio')) return 'Professional Portfolio';
+                    
+                    return 'Custom Presentation';
+                },
+                
+                createPresentation(presentationData) {
+                    // Send presentation data to backend for creation
+                    fetch('/presentations/create-from-ai', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify(presentationData)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Add a special message with presentation link
+                            this.messages.push({
+                                id: this.messageId++,
+                                type: 'ai',
+                                content: `✅ **Presentation saved successfully!**\n\nYour presentation "${presentationData.title}" has been created and saved to your account.\n\n🎯 **Quick Actions:**\n• View Presentation\n• Edit Content\n• Share with Others\n• Download PDF`,
+                                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                                hasActions: true,
+                                presentationId: data.presentation_id,
+                                presentationUrl: data.presentation_url
+                            });
+                            this.scrollToBottom();
+                            this.showNotification('🎉 Presentation saved to your account!', 'success');
+                        } else {
+                            this.showNotification('Failed to save presentation. Please try again.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error creating presentation:', error);
+                        this.showNotification('Error creating presentation. Please try again.', 'error');
+                    });
                 },
                 
                 startNewChat() {
