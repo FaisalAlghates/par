@@ -4,10 +4,11 @@
         @include('partials.head')
         @livewireStyles
     </head>
-    <body class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900">
+    <body class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900 scroll-smooth">
         <!-- Modern Sidebar with Enhanced Glass Effect -->
         <div x-data="{ 
             sidebarOpen: false,
+            profileOpen: false,
             currentTime: new Date().toLocaleTimeString(),
             darkMode: localStorage.getItem('darkMode') === 'true' || false
         }" 
@@ -94,7 +95,7 @@
                     </div>
 
                     <!-- Enhanced Navigation Menu -->
-                    <nav class="flex-1 px-4 py-6 space-y-6 overflow-y-auto custom-scrollbar">
+                    <nav class="flex-1 px-4 py-6 space-y-6 overflow-y-auto sidebar-scroll custom-scrollbar scroll-smooth">
                         
                         <!-- Main Navigation -->
                         <div class="space-y-2">
@@ -205,6 +206,49 @@
                                 </div>
                                 <span>Help & Support</span>
                             </a>
+
+                            <!-- Logout -->
+                            <div class="space-y-2">
+                                <!-- Quick Logout (No Confirmation) -->
+                                <form method="POST" action="{{ route('logout') }}" class="w-full" id="quick-logout-form">
+                                    @csrf
+                                    <button type="submit" 
+                                            onclick="fastLogout(); return false;"
+                                            class="nav-item-luxury flex items-center w-full px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 group shadow-lg">
+                                        <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3 bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
+                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                            </svg>
+                                        </div>
+                                        <span class="font-semibold">Quick Logout</span>
+                                        <div class="ml-auto">
+                                            <svg class="w-4 h-4 text-white/70 group-hover:text-white transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                            </svg>
+                                        </div>
+                                    </button>
+                                </form>
+                                
+                                <!-- Regular Logout (With Confirmation) -->
+                                <form method="POST" action="{{ route('logout') }}" class="w-full" id="logout-form">
+                                    @csrf
+                                    <button type="submit" 
+                                            onclick="return confirmLogout()"
+                                            class="nav-item-luxury flex items-center w-full px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300 group">
+                                        <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3 bg-red-100 dark:bg-red-900/30 group-hover:bg-red-200 dark:group-hover:bg-red-900/50 transition-colors duration-300">
+                                            <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                            </svg>
+                                        </div>
+                                        <span>Safe Logout</span>
+                                        <div class="ml-auto">
+                                            <svg class="w-4 h-4 text-red-400 group-hover:text-red-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                        </div>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </nav>
 
@@ -244,7 +288,7 @@
                         <!-- Enhanced User Profile Section -->
                         <div class="p-4 border-t border-white/20 dark:border-slate-700/50">
                             <div class="flex items-center space-x-3 p-3 rounded-xl bg-gradient-to-r from-white/60 to-white/40 dark:from-slate-800/60 dark:to-slate-800/40 hover:from-white/80 hover:to-white/60 dark:hover:from-slate-700/60 dark:hover:to-slate-700/40 transition-all duration-300 cursor-pointer shadow-lg" 
-                                 x-data="{ profileOpen: false }" @click="profileOpen = !profileOpen">
+                                 @click="profileOpen = !profileOpen">
                                 <div class="flex-shrink-0">
                                     <div class="w-12 h-12 bg-gradient-to-br from-violet-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm elegant-shadow ring-2 ring-white/20 dark:ring-slate-700/50">
                                         {{ auth()->user()->initials() }}
@@ -270,7 +314,14 @@
                             </div>
 
                             <!-- Enhanced Profile Dropdown -->
-                            <div x-show="profileOpen" x-collapse class="mt-3 space-y-1 bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm rounded-xl p-2 border border-white/30 dark:border-slate-700/30">
+                            <div x-show="profileOpen" 
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0 transform scale-95"
+                                 x-transition:enter-end="opacity-100 transform scale-100"
+                                 x-transition:leave="transition ease-in duration-200"
+                                 x-transition:leave-start="opacity-100 transform scale-100"
+                                 x-transition:leave-end="opacity-0 transform scale-95"
+                                 class="mt-3 space-y-1 bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm rounded-xl p-2 border border-white/30 dark:border-slate-700/30">
                                 <a href="{{ route('settings.profile') }}" 
                                    class="flex items-center px-3 py-2.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-800/60 rounded-lg transition-all duration-200 group" 
                                    wire:navigate>
@@ -303,20 +354,25 @@
                                     <span class="font-medium">Billing</span>
                                 </a>
                                 
-                                <hr class="border-white/30 dark:border-slate-700/50 my-2">
+                                <hr class="border-white/30 dark:border-slate-700/50 my-4">
                                 
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" 
-                                            class="flex items-center w-full px-3 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200 group">
-                                        <div class="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-200">
-                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                                            </svg>
+                                <!-- User Info Section -->
+                                <div class="bg-gradient-to-r from-violet-500/10 to-purple-500/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/20 dark:border-slate-700/30">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                            {{ substr(auth()->user()->name, 0, 1) }}
                                         </div>
-                                        <span class="font-medium">Log Out</span>
-                                    </button>
-                                </form>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">
+                                                {{ auth()->user()->name }}
+                                            </p>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400 truncate">
+                                                {{ auth()->user()->email }}
+                                            </p>
+                                        </div>
+                                        <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- App Version & Copyright -->
@@ -354,24 +410,88 @@
                         </button>
                         
                         <a href="{{ route('dashboard') }}" class="flex items-center space-x-2" wire:navigate>
-                            <x-app-logo class="w-8 h-8" />
+                            <div class="w-8 h-8 bg-gradient-to-br from-violet-600 to-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
                             <span class="text-lg font-bold gradient-text">ParHub</span>
                         </a>
                         
-                        <div class="w-10"></div> <!-- Spacer for centering -->
+                        <!-- Mobile Logout Button -->
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" 
+                                    onclick="return confirmLogout()"
+                                    class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors group">
+                                <svg class="w-6 h-6 text-red-600 dark:text-red-400 group-hover:text-red-700 dark:group-hover:text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                            </button>
+                        </form>
                     </div>
                 </header>
 
                 <!-- Page Content -->
-                <main class="flex-1 overflow-hidden">
-                    {{ $slot }}
+                <main class="flex-1 overflow-hidden scroll-container">
+                    <div class="h-full overflow-y-auto scroll-smooth">
+                        {{ $slot }}
+                    </div>
                 </main>
             </div>
         </div>
 
-        <!-- Alpine.js and Scripts -->
+        <!-- Scripts -->
         @fluxScripts
-        <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        
+        <!-- Logout Confirmation Script -->
+        <script>
+            // Fast logout function (no confirmation, immediate)
+            function fastLogout() {
+                // Show loading immediately
+                const btn = event.target.closest('button');
+                if (btn) {
+                    btn.innerHTML = '<span class="flex items-center justify-center"><svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Logging out...</span>';
+                    btn.disabled = true;
+                }
+                
+                // Use quick logout route
+                window.location.href = '{{ route("quick.logout") }}';
+                return false;
+            }
+
+            function confirmLogout() {
+                const confirmed = confirm('Are you sure you want to logout?\n\nThis will end your session.');
+                
+                if (confirmed) {
+                    // Show loading state
+                    const btn = event.target.closest('button');
+                    if (btn) {
+                        btn.innerHTML = `
+                            <div class="flex items-center justify-center">
+                                <svg class="w-4 h-4 text-current animate-spin mr-2" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>Logging out...</span>
+                            </div>
+                        `;
+                        btn.disabled = true;
+                    }
+                    
+                    return true;
+                }
+                return false;
+            }
+            
+            // Keyboard shortcut for quick logout (Ctrl+Shift+L)
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.shiftKey && e.key === 'L') {
+                    e.preventDefault();
+                    fastLogout();
+                }
+            });
+        </script>
         
         <!-- Custom Styles -->
         <style>

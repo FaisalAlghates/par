@@ -13,7 +13,108 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollAnimations();
     initFormEnhancements();
     initLoadingStates();
+    initCustomScrolling();
 });
+
+// ========================================
+// CUSTOM SCROLLING ENHANCEMENTS
+// ========================================
+function initCustomScrolling() {
+    // Enable smooth scrolling for all internal links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Custom scroll indicators
+    const scrollIndicator = createScrollIndicator();
+    document.body.appendChild(scrollIndicator);
+
+    // Scroll reveal animations
+    initScrollReveal();
+    
+    // Parallax scrolling for background elements
+    initParallaxScrolling();
+    
+    // Hide/show elements on scroll
+    initScrollDirectionDetection();
+}
+
+// إنشاء مؤشر التمرير
+function createScrollIndicator() {
+    const indicator = document.createElement('div');
+    indicator.className = 'fixed top-0 left-0 h-1 bg-gradient-to-r from-purple-600 to-blue-600 z-50 transition-all duration-300';
+    indicator.style.width = '0%';
+    
+    window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        indicator.style.width = scrolled + '%';
+    });
+    
+    return indicator;
+}
+
+// إضافة تأثيرات الكشف عند التمرير
+function initScrollReveal() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // Apply reveal animation to elements
+    document.querySelectorAll('.card, .glass-effect, .animate-on-scroll').forEach(el => {
+        el.classList.add('reveal-hidden');
+        observer.observe(el);
+    });
+}
+
+// تأثير Parallax للخلفيات
+function initParallaxScrolling() {
+    const parallaxElements = document.querySelectorAll('.parallax-bg');
+    
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * -0.5;
+        
+        parallaxElements.forEach(element => {
+            element.style.transform = `translateY(${rate}px)`;
+        });
+    });
+}
+
+// اكتشاف اتجاه التمرير
+function initScrollDirectionDetection() {
+    let lastScrollTop = 0;
+    
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const isScrollingDown = scrollTop > lastScrollTop;
+        
+        document.body.classList.toggle('scrolling-down', isScrollingDown);
+        document.body.classList.toggle('scrolling-up', !isScrollingDown);
+        
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    }, false);
+}
 
 // تحسين التفاعلات
 function initSmoothInteractions() {

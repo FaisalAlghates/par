@@ -1,33 +1,33 @@
 <?php
 
-namespace App\Livewire\Auth;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
 
-class Register extends Component
+class RegisterController extends Controller
 {
-    public string $name = '';
-
-    public string $email = '';
-
-    public string $password = '';
-
-    public string $password_confirmation = '';
+    /**
+     * Display the registration view.
+     */
+    public function showRegistrationForm()
+    {
+        return view('auth.register');
+    }
 
     /**
      * Handle an incoming registration request.
      */
-    public function register(): void
+    public function register(Request $request)
     {
-        \Log::info('Registration attempt started for email: ' . $this->email);
+        \Log::info('Registration attempt started for email: ' . $request->email);
         
-        $validated = $this->validate([
+        $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
@@ -49,14 +49,6 @@ class Register extends Component
         
         \Log::info('User logged in successfully');
 
-        session()->flash('success', 'Account created successfully! Welcome to ParHub.');
-
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
-    }
-
-    public function render()
-    {
-        return view('livewire.auth.register-simple')
-            ->layout('components.layouts.auth');
+        return redirect()->route('dashboard')->with('success', 'Account created successfully! Welcome to ParHub.');
     }
 }

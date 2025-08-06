@@ -39,6 +39,105 @@
 }
 
 @layer base {
+    /* ========================================
+       CUSTOM SCROLLBAR DESIGN
+       ======================================== */
+    
+    /* Webkit Scrollbar Styling */
+    ::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: rgba(148, 163, 184, 0.1);
+        border-radius: 10px;
+        margin: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+        transition: all 0.3s ease;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        transform: scale(1.1);
+    }
+    
+    ::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+    
+    /* Dark Mode Scrollbar */
+    .dark ::-webkit-scrollbar-track {
+        background: rgba(71, 85, 105, 0.2);
+    }
+    
+    .dark ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    }
+    
+    .dark ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%);
+    }
+    
+    /* Firefox Scrollbar */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(102, 126, 234, 0.8) rgba(148, 163, 184, 0.1);
+    }
+    
+    .dark * {
+        scrollbar-color: rgba(139, 92, 246, 0.8) rgba(71, 85, 105, 0.2);
+    }
+    
+    /* ========================================
+       SMOOTH SCROLLING
+       ======================================== */
+    
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px;
+    }
+    
+    body {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    
+    /* Custom Scroll Classes */
+    .scroll-smooth {
+        scroll-behavior: smooth;
+    }
+    
+    .scroll-elegant {
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(102, 126, 234, 0.6) transparent;
+    }
+    
+    .scroll-elegant::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .scroll-elegant::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .scroll-elegant::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.6) 0%, rgba(118, 75, 162, 0.6) 100%);
+        border-radius: 6px;
+        border: none;
+    }
+    
+    .scroll-elegant::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+    }
+
     /* Glass Effect Luxury Styles */
     .glass-effect-luxury {
         background: rgba(255, 255, 255, 0.07);

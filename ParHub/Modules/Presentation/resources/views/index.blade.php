@@ -1,5 +1,5 @@
 <x-presentation::layouts.master title="My Presentations">
-<div x-data="{ darkMode: false }" x-init="darkMode = localStorage.getItem('darkMode') === 'true'" :class="{ 'dark': darkMode }" class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900">
+<div x-data="{ darkMode: false }" x-init="darkMode = localStorage.getItem('darkMode') === 'true'" :class="{ 'dark': darkMode }" class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900 scroll-smooth">
     
     <!-- Navigation Bar -->
     <nav class="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-white/10">
@@ -141,7 +141,7 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Sample Presentation Cards -->
                 @for($i = 1; $i <= 6; $i++)
-                <div class="glass-effect rounded-2xl overflow-hidden elegant-shadow hover:scale-[1.02] transition-all duration-300 group">
+                <div class="glass-effect rounded-2xl overflow-hidden elegant-shadow hover:scale-[1.02] transition-all duration-300 group animate-on-scroll">
                     <!-- Thumbnail -->
                     <div class="aspect-video bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900/20 dark:to-purple-900/20 relative overflow-hidden">
                         <div class="absolute inset-0 flex items-center justify-center">

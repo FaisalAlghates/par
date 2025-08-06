@@ -22,7 +22,7 @@ class="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800
             
             <!-- Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                <div class="glass-card rounded-3xl p-6">
+                <div class="glass-card rounded-3xl p-6 animate-on-scroll">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold">Total Views</h3>
                         <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
@@ -36,20 +36,33 @@ class="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800
                     <p class="text-sm text-green-400">+12% from last month</p>
                 </div>
                 
-                <div class="glass-card rounded-3xl p-6">
+                                <div class="glass-card rounded-3xl p-6 animate-on-scroll">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold">Presentations</h3>
-                        <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
                         </div>
                     </div>
-                    <p class="text-3xl font-bold mb-2">24</p>
-                    <p class="text-sm text-green-400">+3 this week</p>
+                    <div class="text-3xl font-bold mb-2">12</div>
+                    <div class="text-sm opacity-70">+3 this month</div>
                 </div>
                 
-                <div class="glass-card rounded-3xl p-6">
+                <div class="glass-card rounded-3xl p-6 animate-on-scroll">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">Storage Used</h3>
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="text-3xl font-bold mb-2">23%</div>
+                    <div class="text-sm opacity-70">23MB / 100MB</div>
+                </div>
+                
+                <div class="glass-card rounded-3xl p-6 animate-on-scroll">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold">Engagement</h3>
                         <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl flex items-center justify-center">
@@ -62,7 +75,7 @@ class="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800
                     <p class="text-sm text-green-400">+5% increase</p>
                 </div>
                 
-                <div class="glass-card rounded-3xl p-6">
+                <div class="glass-card rounded-3xl p-6 animate-on-scroll">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold">Downloads</h3>
                         <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center">
