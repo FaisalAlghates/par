@@ -44,6 +44,21 @@ ParHub gives each user one workspace for the whole life of a presentation: start
 - **Data:** any Laravel-supported database (SQLite by default)
 - **Quality:** Pest, Laravel Pint
 
+## Run the whole app (Docker)
+
+The static demo above is a snapshot. The real app, with working forms, uploads and sign-in, runs from the included `Dockerfile`: PHP, the built front end and a SQLite database seeded on start.
+
+```bash
+docker build -t parhub-demo .
+docker run --rm -p 8080:10000 parhub-demo
+```
+
+Open <http://localhost:8080>. Sign in with `test@example.com` / `password` (created by the seeder), or open `/test-login`. A GitHub Action builds this image on every push and requests every page of the app: dashboard, advanced dashboard, analytics, presentations, templates, categories, search, media, shared, trash, AI assistant, import and export, help, billing, upgrade and the settings.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/FaisalAlghates/par)
+
+> The Render button deploys the same image on Render's free plan: the first request after a pause is slow, and the data is reset each time the instance restarts. Use it for demos only, never with real data.
+
 ## Run it
 
 You need PHP 8.2+, Composer and Node.js.
