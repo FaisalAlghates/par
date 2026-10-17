@@ -131,8 +131,8 @@
                         <svg class="w-full h-full" viewBox="0 0 300 200">
                             @php
                                 $maxViews = collect($viewsChart)->max('views') ?: 1;
-                                $points = collect($viewsChart)->map(function($item, $index) use ($maxViews) {
-                                    $x = ($index / (count($viewsChart) - 1)) * 280 + 10;
+                                $points = collect($viewsChart)->map(function($item, $index) use ($maxViews, $viewsChart) {
+                                    $x = ($index / max(count($viewsChart) - 1, 1)) * 280 + 10;
                                     $y = 190 - (($item['views'] / $maxViews) * 170);
                                     return "{$x},{$y}";
                                 })->implode(' ');
@@ -145,7 +145,7 @@
                                 </linearGradient>
                             </defs>
                             @foreach($viewsChart as $index => $data)
-                            <circle cx="{{ ($index / (count($viewsChart) - 1)) * 280 + 10 }}" 
+                            <circle cx="{{ ($index / max(count($viewsChart) - 1, 1)) * 280 + 10 }}" 
                                    cy="{{ 190 - (($data['views'] / $maxViews) * 170) }}" 
                                    r="4" 
                                    fill="#10B981"
