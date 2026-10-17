@@ -21,6 +21,7 @@ class Template extends Model
         'downloads',
         'rating',
         'rating_count',
+        'tags',
         'is_active'
     ];
 

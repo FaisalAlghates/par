@@ -56,8 +56,8 @@ class DashboardController extends Controller
         // Chart Data - Presentations per month
         $presentationsChart = Presentation::byUser($user->id)
             ->select(
-                DB::raw('MONTH(created_at) as month'),
-                DB::raw('YEAR(created_at) as year'),
+                DB::raw(DB::connection()->getDriverName() === 'sqlite' ? "CAST(strftime('%m', created_at) AS INTEGER) as month" : 'MONTH(created_at) as month'),
+                DB::raw(DB::connection()->getDriverName() === 'sqlite' ? "CAST(strftime('%Y', created_at) AS INTEGER) as year" : 'YEAR(created_at) as year'),
                 DB::raw('COUNT(*) as count')
             )
             ->where('created_at', '>=', Carbon::now()->subMonths(6))
@@ -87,7 +87,7 @@ class DashboardController extends Controller
         // Category Distribution
         $categoryStats = Category::withCount(['templates as template_count'])
             ->active()
-            ->having('template_count', '>', 0)
+            ->has('templates')
             ->orderBy('template_count', 'desc')
             ->take(5)
             ->get();
@@ -143,7 +143,9 @@ class DashboardController extends Controller
         $templateUsage = Template::withCount(['presentations as usage_count' => function($query) use ($user) {
                 $query->where('user_id', $user->id);
             }])
-            ->having('usage_count', '>', 0)
+            ->whereHas('presentations', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
             ->orderBy('usage_count', 'desc')
             ->take(10)
             ->get();
