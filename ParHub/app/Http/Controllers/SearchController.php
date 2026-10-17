@@ -86,14 +86,7 @@ class SearchController extends Controller
                 break;
             default:
                 // Relevance sorting - prioritize title matches
-                $templates->orderByRaw("
-                    CASE 
-                        WHEN name LIKE '%{$query}%' THEN 1
-                        WHEN description LIKE '%{$query}%' THEN 2
-                        WHEN tags LIKE '%{$query}%' THEN 3
-                        ELSE 4
-                    END
-                ");
+                $templates->orderByRaw('CASE WHEN name LIKE ? THEN 1 WHEN description LIKE ? THEN 2 WHEN tags LIKE ? THEN 3 ELSE 4 END', ["%{$query}%", "%{$query}%", "%{$query}%"]);
                 break;
         }
 
@@ -121,13 +114,7 @@ class SearchController extends Controller
                 break;
             default:
                 // Relevance sorting
-                $presentations->orderByRaw("
-                    CASE 
-                        WHEN title LIKE '%{$query}%' THEN 1
-                        WHEN description LIKE '%{$query}%' THEN 2
-                        ELSE 3
-                    END
-                ");
+                $presentations->orderByRaw('CASE WHEN title LIKE ? THEN 1 WHEN description LIKE ? THEN 2 ELSE 3 END', ["%{$query}%", "%{$query}%"]);
                 break;
         }
 

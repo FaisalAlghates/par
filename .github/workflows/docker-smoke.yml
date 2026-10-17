@@ -1,6 +1,6 @@
 name: Container smoke test
 
-# Builds the demo image, starts it, signs in with the app's test-login route and requests the main pages.
+# Builds the demo image, starts it, signs in with the app's test-login route and requests every page of the app.
 on:
   push:
     branches: [main]
@@ -19,10 +19,13 @@ jobs:
           for i in $(seq 1 60); do curl -fs http://127.0.0.1:8080/ >/dev/null && break; sleep 2; done
           curl -s -c jar -b jar -L -o /dev/null http://127.0.0.1:8080/test-login
           fail=0
-          for p in / /dashboard /dashboard/advanced /dashboard/analytics /presentations /presentations/create /templates /categories /analytics /search /media /shared /ai-assistant /help /billing /settings/profile /settings/appearance; do
+          for p in / /dashboard /dashboard/advanced /dashboard/analytics /presentations /presentations/create /presentations/1 /presentations/1/edit \
+                   /templates /templates/create /templates/1 /templates/1/edit /templates/1/preview /categories /categories/create /categories/1 /categories/1/edit \
+                   '/search?q=a' '/search?q=a&type=templates' '/search?q=a&type=presentations' /analytics /media /shared /trash /ai-assistant /import-export /help /profile /billing /upgrade \
+                   /settings/profile /settings/password /settings/appearance; do
             code=$(curl -s -b jar -o body.txt -w '%{http_code}' -H 'Accept: application/json' "http://127.0.0.1:8080$p")
             echo "$code $p"
-            if [ "$code" != "200" ] && [ "$code" != "302" ]; then fail=1; head -c 400 body.txt | tr '\n' ' '; echo; fi
+            if [ "$code" != "200" ] && [ "$code" != "302" ]; then fail=1; head -c 500 body.txt | tr '\n' ' '; echo; fi
           done
           docker logs app 2>&1 | tail -n 20
           exit $fail

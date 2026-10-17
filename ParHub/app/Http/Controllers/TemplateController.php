@@ -89,7 +89,7 @@ class TemplateController extends Controller
                 ->store('templates/previews', 'public');
         }
 
-        $template = Template::create($validated);
+        $template = Template::create($this->normalize($validated));
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -150,7 +150,7 @@ class TemplateController extends Controller
                 ->store('templates/previews', 'public');
         }
 
-        $template->update($validated);
+        $template->update($this->normalize($validated));
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -238,5 +238,22 @@ class TemplateController extends Controller
             'success' => true,
             'template' => $template
         ]);
+    }
+
+    /** Maps the form fields onto the model: type to is_premium, the upload to thumbnail, JSON text to arrays. */
+    private function normalize(array $validated): array
+    {
+        $validated['is_premium'] = ($validated['type'] ?? 'free') === 'premium';
+        if (isset($validated['preview_image'])) {
+            $validated['thumbnail'] = $validated['preview_image'];
+        }
+        foreach (['layout', 'styles'] as $key) {
+            if (isset($validated[$key]) && is_string($validated[$key])) {
+                $validated[$key] = json_decode($validated[$key], true);
+            }
+        }
+        unset($validated['type'], $validated['preview_image']);
+
+        return $validated;
     }
 }
