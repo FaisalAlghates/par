@@ -1,0 +1,78 @@
+name: Live demo (GitHub Pages)
+
+# A static snapshot of the running app (ParHub lives in the ParHub/ folder): CI boots Laravel on SQLite with its seeders,
+# signs in as the seeded user, crawls the pages and publishes them.
+# https://faisalalghates.github.io/par/  (read-only: forms and live components do not work in the snapshot)
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ParHub
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl, pdo_sqlite, sqlite3, gd, zip, bcmath, fileinfo, exif
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: npm install --no-audit --no-fund
+      - run: npm run build
+      - name: Boot the app on SQLite with seeded data
+        run: |
+          cp .env.example .env
+          php artisan key:generate --force
+          mkdir -p database && touch database/database.sqlite
+          sed -i 's/^APP_ENV=.*/APP_ENV=local/; s/^APP_DEBUG=.*/APP_DEBUG=false/; s#^APP_URL=.*#APP_URL=http://127.0.0.1:8000#' .env
+          php artisan migrate --force --seed
+          php artisan storage:link || true
+      - name: Sign in and crawl the pages
+        run: |
+          php artisan serve --host=127.0.0.1 --port=8000 > serve.log 2>&1 &
+          for i in $(seq 1 20); do curl -fs http://127.0.0.1:8000/ >/dev/null && break; sleep 1; done
+          # the app's own test-login route signs in the first (seeded) user
+          curl -s -c jar -b jar -L -o /dev/null http://127.0.0.1:8000/test-login
+          mkdir -p site
+          wget --mirror --page-requisites --adjust-extension --convert-links --no-host-directories --no-parent \
+            --restrict-file-names=windows -e robots=off --level=3 --tries=2 --timeout=20 \
+            --load-cookies jar --keep-session-cookies \
+            --reject-regex '(logout|/delete|/destroy|/edit|/create|/api/|livewire/update|test-login|quick-login|debug-auth|db-stats|/download)' \
+            -P site \
+            http://127.0.0.1:8000/ http://127.0.0.1:8000/dashboard http://127.0.0.1:8000/dashboard/advanced http://127.0.0.1:8000/dashboard/analytics \
+            http://127.0.0.1:8000/presentations http://127.0.0.1:8000/templates http://127.0.0.1:8000/categories http://127.0.0.1:8000/analytics \
+            http://127.0.0.1:8000/search http://127.0.0.1:8000/media http://127.0.0.1:8000/shared http://127.0.0.1:8000/ai-assistant \
+            http://127.0.0.1:8000/help http://127.0.0.1:8000/billing http://127.0.0.1:8000/settings/appearance || true
+          test -f site/index.html || { echo "no home page was captured"; tail -50 serve.log; exit 1; }
+          find site -name '*.html' -print0 | xargs -0 sed -i 's#<body\([^>]*\)>#<body\1><div style="background:\#2a2208;color:\#f3d98b;padding:8px 16px;font:14px/1.4 system-ui,sans-serif;text-align:center">Static demo snapshot: forms and live components are switched off.</div>#; s#http://127.0.0.1:8000/#./#g'
+          touch site/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ParHub/site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
