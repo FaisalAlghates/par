@@ -1,378 +1,100 @@
-# ParHub — Presentation Management Platform
+<div align="center">
 
-ParHub is a web-based presentation management platform built with Laravel, Livewire, Alpine.js, and Tailwind CSS.
+# ParHub
 
-The platform provides users with a centralized workspace for creating, managing, organizing, uploading, and editing presentations. It also includes presentation templates, categories, search functionality, analytics, file management, and an AI-assisted presentation creation workflow.
+**A presentation management platform: create, organize, search and track presentations from one workspace.**
+
+[![Live demo](https://img.shields.io/badge/live%20demo-open-6d28d9)](https://faisalalghates.github.io/par/)
+![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20)
+![Livewire](https://img.shields.io/badge/Livewire-Volt%20%C2%B7%20Flux-FB70A9)
+![Tailwind](https://img.shields.io/badge/Tailwind%20CSS-4-38BDF8)
+![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4)
+
+**[Live demo](https://faisalalghates.github.io/par/)** · [Features](#features) · [Run it](#run-it) · [Structure](#project-structure) · [Roadmap](#roadmap)
+
+<img src="docs/screenshots/landing.png" alt="ParHub landing page" width="860" />
+
+</div>
+
+> **About the demo.** The live demo is a read-only static snapshot of the running app (a CI job boots Laravel with the seeded data, signs in and saves the pages). Forms, uploads and live components do not work in it. Run the project locally for the real thing.
+
+## What it does
+
+ParHub gives each user one workspace for the whole life of a presentation: start from a template or an uploaded file, organize it, search for it later, and see how it is used.
 
 ## Features
 
-* User authentication and account management
-* Interactive dashboard
-* Presentation creation and management
-* Presentation templates
-* Template categories
-* Search and autocomplete
-* Presentation file uploads
-* AI-assisted presentation creation
-* Presentation analytics
-* Presentation view tracking
-* Draft, published, and archived presentation states
-* Media library
-* Shared files interface
-* Trash management
-* User profile and settings
-* Billing and upgrade interfaces
-* Responsive user interface
+| Area | What you get |
+| --- | --- |
+| **Workspace** | Interactive dashboard, advanced dashboard and analytics views, quick statistics |
+| **Presentations** | Create, edit, view and delete; draft, published and archived states; view tracking |
+| **Uploads** | PDF, DOCX and PPTX files linked to a presentation and its owner |
+| **Templates and categories** | Template library with preview and download, category management |
+| **Search** | Full search with suggestions and autocomplete |
+| **AI-assisted creation** | A workflow that takes structured input (title, type, theme, slide count) and creates a presentation record with a slide structure and AI metadata, for business, educational, marketing and portfolio decks |
+| **Account** | Registration, login, email verification, password recovery, profile and appearance settings |
+| **Housekeeping** | Media library, shared files, trash, billing and upgrade screens |
 
-## AI-Assisted Presentation Creation
+> The AI workflow builds the presentation structure from the input you provide. Calling an external AI model and exporting to PowerPoint are on the [roadmap](#roadmap), not part of the current version.
 
-ParHub includes an AI-assisted workflow that accepts structured presentation-generation data and creates a presentation record containing:
+## Tech stack
 
-* Presentation title
-* Presentation type
-* Theme
-* Number of slides
-* Estimated presentation duration
-* Slide structure
-* AI metadata
+- **Backend:** PHP 8.2+, Laravel 12, Livewire with Volt and Flux, Laravel Modules
+- **Frontend:** Blade, Alpine.js, Tailwind CSS 4, Vite
+- **Data:** any Laravel-supported database (SQLite by default)
+- **Quality:** Pest, Laravel Pint
 
-Supported presentation concepts include:
+## Run it
 
-### Business
-
-* Executive Summary
-* Problem Statement
-* Solution
-* Market Analysis
-* Business Model
-* Competition
-* Financial Projections
-
-### Educational
-
-* Learning Objectives
-* Introduction
-* Key Concepts
-* Examples
-* Case Studies
-* Knowledge Checks
-* Summary
-
-### Marketing
-
-* Brand Story
-* Target Audience
-* Campaign Strategy
-* Creative Concepts
-* Social Media Plan
-* Budget
-* Success Metrics
-
-### Portfolio
-
-* Professional Introduction
-* Skills
-* Projects
-* Achievements
-* Goals
-* Contact Information
-
-Note: The current repository implements the AI presentation creation workflow and data structure. An external production AI API integration can be added as a future enhancement.
-
-## Dashboard & Analytics
-
-The platform provides dashboard functionality for tracking presentation activity, including:
-
-* Total presentations
-* Published presentations
-* Draft presentations
-* Presentation views
-* Analytics data
-
-This allows users to monitor their presentation library and engagement.
-
-## Presentation Management
-
-Users can:
-
-* Create presentations
-* Edit presentations
-* Upload presentation files
-* Select templates
-* Update presentation information
-* Publish presentations
-* Archive presentations
-* Delete presentations
-* Duplicate presentations
-* View presentation statistics
-
-## Templates & Categories
-
-ParHub includes a template management system with categories to help users organize and discover presentation designs.
-
-Templates can include:
-
-* Name
-* Category
-* Layout
-* Rating
-* Download information
-* Premium status
-* Active/inactive status
-
-## Search
-
-The application includes several search capabilities:
-
-* Presentation search
-* Template search
-* Category search
-* Search suggestions
-* Autocomplete
-
-## Architecture
-
-```text
-                         +----------------------+
-                         |      ParHub UI       |
-                         | Blade / Livewire     |
-                         | Alpine.js / Tailwind |
-                         +----------+-----------+
-                                    |
-                                    v
-                         +----------------------+
-                         |     Laravel 12       |
-                         | Controllers / Models |
-                         | Routes / Livewire    |
-                         +----------+-----------+
-                                    |
-                +-------------------+-------------------+
-                |                   |                   |
-                v                   v                   v
-          Presentations         Templates          Categories
-                |
-                v
-             Database
-                |
-                v
-          AI Metadata /
-          Uploaded Files
-```
-
-## Modules
-
-The project includes modular components for different areas of the platform, including:
-
-* Landing Page
-* Documentation
-* Presentation
-* Admin
-
-The modular structure helps separate application functionality and makes the system easier to maintain and extend.
-
-## Technologies
-
-### Backend
-
-* PHP
-* Laravel 12
-* Laravel Blade
-* Livewire
-* Laravel Modules
-
-### Frontend
-
-* HTML5
-* CSS3
-* Tailwind CSS
-* Alpine.js
-* JavaScript
-
-### Build Tools
-
-* Vite
-* npm
-* Composer
-
-### Testing & Code Quality
-
-* Pest
-* Laravel Pint
-
-## Project Structure
-
-```text
-ParHub/
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   └── Livewire/
-│   └── Models/
-│
-├── database/
-│   ├── migrations/
-│   ├── factories/
-│   └── seeders/
-│
-├── Modules/
-│   ├── Admin/
-│   ├── Documentation/
-│   ├── LandingPage/
-│   └── Presentation/
-│
-├── resources/
-│   └── views/
-│       ├── ai-assistant/
-│       ├── analytics/
-│       ├── presentations/
-│       ├── templates/
-│       ├── media/
-│       ├── shared/
-│       └── dashboard/
-│
-├── routes/
-│   ├── web.php
-│   └── auth.php
-│
-├── package.json
-├── composer.json
-└── README.md
-```
-
-## Installation
-
-### Requirements
-
-* PHP 8.2+
-* Composer
-* Node.js and npm
-* Database supported by Laravel
-
-### 1. Clone the Repository
+You need PHP 8.2+, Composer and Node.js.
 
 ```bash
-git clone <YOUR_REPOSITORY_URL>
-cd ParHub
-```
+git clone https://github.com/FaisalAlghates/par.git
+cd par/ParHub
 
-### 2. Install PHP Dependencies
-
-```bash
 composer install
-```
-
-### 3. Install Frontend Dependencies
-
-```bash
 npm install
-```
 
-### 4. Configure Environment
-
-```bash
 cp .env.example .env
-```
-
-Generate the Laravel application key:
-
-```bash
 php artisan key:generate
+touch database/database.sqlite   # or configure another database in .env
+
+php artisan migrate --seed       # also creates a test user: test@example.com / password
 ```
 
-Configure your database settings inside `.env`.
-
-### 5. Run Migrations
-
-```bash
-php artisan migrate
-```
-
-### 6. Start the Development Server
-
-In one terminal:
+Then, in two terminals:
 
 ```bash
 php artisan serve
-```
-
-In another terminal:
-
-```bash
 npm run dev
 ```
 
-Then open:
+Open <http://127.0.0.1:8000>. Run the tests with `php artisan test`.
+
+## Project structure
 
 ```text
-http://127.0.0.1:8000
+ParHub/
+├── app/                 Controllers, Livewire components, models
+├── Modules/             Admin, Documentation, LandingPage, Presentation
+├── database/            migrations, factories, seeders
+├── resources/views/     ai-assistant, analytics, presentations, templates, media, shared, dashboard
+├── routes/              web.php, auth.php
+└── composer.json · package.json
 ```
 
-## Testing
+## Security notes
 
-Run the project's test suite with:
+`routes/web.php` contains development helpers (`/test-login`, `/quick-login`, `/debug-auth`, `/db-stats`) that sign a user in or show system information without credentials. **Remove them, or guard them behind `app()->isLocal()`, before deploying this app anywhere public.**
 
-```bash
-php artisan test
-```
+## Roadmap
 
-## Authentication & Authorization
-
-ParHub includes authentication functionality with:
-
-* Registration
-* Login
-* Email verification
-* Password recovery
-* Password confirmation
-* Profile management
-* Protected application routes
-
-Presentation records are associated with authenticated users, with authorization checks used to protect user-owned content.
-
-## File Management
-
-The platform supports presentation file uploads, including:
-
-* PDF
-* DOCX
-* PPTX
-
-Uploaded presentations are stored and associated with the corresponding user and presentation record.
-
-## Future Improvements
-
-Possible future development includes:
-
-* Full OpenAI API integration
-* Automatic presentation file generation
-* PowerPoint export
-* AI-generated images
-* AI-generated speaker notes
-* Collaborative editing
-* Real-time collaboration
-* Advanced presentation analytics
-* Cloud storage integration
-* Subscription and payment integration
-* More presentation formats
-* Arabic AI-generated content
-
-## Project Goals
-
-ParHub was designed to simplify the presentation creation and management process by bringing presentation creation, templates, organization, analytics, file management, and AI-assisted workflows into one platform.
-
-The project demonstrates practical experience with:
-
-* Laravel application architecture
-* MVC development
-* Livewire
-* Modular application design
-* Database-driven web applications
-* Authentication and authorization
-* REST/AJAX endpoints
-* File management
-* Responsive UI development
-* AI-assisted application workflows
+- Call a real AI model to write slide content, speaker notes and images
+- Generate and export PowerPoint files
+- Real-time collaborative editing
+- Advanced analytics, cloud storage, subscriptions and payments
+- More presentation formats and Arabic content generation
 
 ## License
 
-This project is available for educational and portfolio purposes.
+Available for educational and portfolio purposes.
