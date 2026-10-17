@@ -41,7 +41,7 @@ jobs:
           cp .env.example .env
           php artisan key:generate --force
           mkdir -p database && touch database/database.sqlite
-          sed -i 's/^APP_ENV=.*/APP_ENV=local/; s/^APP_DEBUG=.*/APP_DEBUG=true/; s#^APP_URL=.*#APP_URL=http://127.0.0.1:8000#' .env
+          sed -i 's/^APP_ENV=.*/APP_ENV=local/; s/^APP_DEBUG=.*/APP_DEBUG=false/; s#^APP_URL=.*#APP_URL=http://127.0.0.1:8000#' .env
           php artisan migrate --force --seed
           php artisan storage:link || true
       - name: Sign in and crawl the pages
@@ -51,7 +51,6 @@ jobs:
           # the app's own test-login route signs in the first (seeded) user
           curl -s -c jar -b jar -L -o /dev/null http://127.0.0.1:8000/test-login
           sed -i 's/^#HttpOnly_//' jar
-          echo '--- dashboard probe ---'; curl -s -b jar -H 'Accept: application/json' http://127.0.0.1:8000/dashboard | head -c 1200; echo
           mkdir -p site
           wget --mirror --page-requisites --adjust-extension --convert-links --no-host-directories --no-parent \
             --restrict-file-names=windows -e robots=off --level=3 --tries=2 --timeout=20 \
@@ -63,7 +62,7 @@ jobs:
             http://127.0.0.1:8000/search http://127.0.0.1:8000/media http://127.0.0.1:8000/shared http://127.0.0.1:8000/ai-assistant \
             http://127.0.0.1:8000/help http://127.0.0.1:8000/billing http://127.0.0.1:8000/settings/appearance || true
           test -f site/index.html || { echo "no home page was captured"; tail -50 serve.log; exit 1; }
-          find site -name '*.html' -print0 | xargs -0 sed -i 's#<body\([^>]*\)>#<body\1><div style="position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:99999;background:#2a2208;color:#f3d98b;padding:8px 16px;border-radius:8px;font:13px/1.4 system-ui,sans-serif;box-shadow:0 2px 12px rgba(0,0,0,.4)">Static demo snapshot: forms and live components are switched off.</div>#; s#http://127.0.0.1:8000/#./#g'
+          find site -name '*.html' -print0 | xargs -0 sed -i 's|<body\([^>]*\)>|<body\1><div style="position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:99999;background:#2a2208;color:#f3d98b;padding:8px 16px;border-radius:8px;font:13px/1.4 system-ui,sans-serif;box-shadow:0 2px 12px rgba(0,0,0,.4)">Static demo snapshot: forms and live components are switched off.</div>|; s|http://127.0.0.1:8000/|./|g'
           touch site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
