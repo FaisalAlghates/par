@@ -23,15 +23,12 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // إضافة بيانات التصنيفات والقوالب والعروض التقديمية
-            public function run(): void
-    {
+        // categories, templates, presentations and reviews
         $this->call([
             CategorySeeder::class,
             SimpleTemplateSeeder::class,
             PresentationSeeder::class,
             ReviewSeeder::class,
         ]);
-    }
     }
 }
